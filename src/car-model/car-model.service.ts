@@ -11,10 +11,14 @@ export class CarModelService {
   ) {}
 
   async getAllCarModels(): Promise<CarModel[]> {
-    return this.carModelRepository.find();
+    return await this.carModelRepository.find();
   }
 
   async createCarModel(carModel: CarModel): Promise<CarModel> {
-    return this.carModelRepository.save(carModel);
+    return await this.carModelRepository.save(carModel);
+  }
+
+  async deleteCarModel(carModel: CarModel): Promise<CarModel> {
+    return await this.carModelRepository.remove(carModel);
   }
 }
