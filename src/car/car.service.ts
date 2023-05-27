@@ -5,18 +5,19 @@ import { Car } from './car.entity';
 import { CreateCarDto } from 'src/dto/create-car.dto';
 import { Model } from 'src/model/model.entity';
 import { ModelService } from 'src/model/model.service';
+import { CreateDamageDto } from 'src/dto/create-damage.dto';
+import { Damage } from 'src/damage/damage.entity';
+import { DamageService } from 'src/damage/damage.service';
+import { GenericService } from 'src/generic/generic.service';
 
 @Injectable()
-export class CarService {
+export class CarService extends GenericService<Car> {
     constructor(
         @InjectRepository(Car) private readonly carRepository: Repository<Car>,
-        private readonly modelSevice: ModelService
-    ) {}
-
-    async findAll(): Promise<Car[]> {
-        return await this.carRepository.find({
-            relations: ['model'],
-        });
+        private readonly modelSevice: ModelService,
+        private readonly damageService: DamageService
+    ) {
+        super(carRepository);
     }
 
     async create(createCarDto: CreateCarDto): Promise<Car> {
@@ -35,6 +36,25 @@ export class CarService {
         }
 
         car.model = model;
+
+        return this.carRepository.save(car);
+    }
+
+    async createDamage(id: number, createDamageDto: CreateDamageDto) {
+        const car = await this.findOne(id);
+
+        if (car == null || car == undefined) {
+            return null;
+        }
+
+        let damage = new Damage();
+        damage.car = car;
+        damage.description = createDamageDto.description;
+        damage.notificationDate = createDamageDto.notificationDate;
+        
+        damage = await this.damageService.create(damage);
+
+        car.damages.push(damage);
 
         return this.carRepository.save(car);
     }

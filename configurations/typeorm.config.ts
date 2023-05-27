@@ -6,7 +6,7 @@ const ormConfig: DataSource = new DataSource({
     port: 5432,
     username: "postgres",
     password: "postgres",
-    database: "postgres",
+    database: "cars",
     entities: ["dist/**/*.entity{.ts,.js}"],
     logging: true,
     synchronize: false,
