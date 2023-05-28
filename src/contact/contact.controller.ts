@@ -28,7 +28,9 @@ export class ContactController {
     }
 
     @Put(":id")
-    async update(@Param("id") id: number, @Body() contactDto: CreateContactDto): Promise<Contact> {
+    async update(
+        @Param("id") id: number, 
+        @Body() contactDto: CreateContactDto): Promise<Contact> {
         const contact = new Contact();
         contact.id = id;
         Object.assign(contact, contactDto);

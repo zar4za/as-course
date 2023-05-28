@@ -21,7 +21,10 @@ export class GenericService<T extends GenericEntity> {
         return await this.repository.save(stored);
     }
 
-    async findOne(id: any, relations?: FindOptionsRelationByString | FindOptionsRelations<T>): Promise<T> { 
+    async findOne(
+        id: any, 
+        relations?: FindOptionsRelationByString | FindOptionsRelations<T>): 
+        Promise<T> { 
         return await this.repository.findOne({
             where: {
                 id
