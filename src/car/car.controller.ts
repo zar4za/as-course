@@ -55,6 +55,6 @@ export class CarController {
     @ApiOperation({ summary: 'Получение автомобиля по id.' })
     @ApiResponse({ status: 200, description: 'Автомобиль', type: Car })
     async findOne(@Param('id') id: number): Promise<Car> {
-        return await this.carService.findOne(id, ['model', 'damages']);
+        return await this.carService.findOne(id, ['model', 'damages', 'contacts']);
     }
 }

@@ -8,21 +8,26 @@ import { CreateDamageDto } from 'src/dto/create-damage.dto';
 import { Damage } from 'src/damage/damage.entity';
 import { DamageService } from 'src/damage/damage.service';
 import { GenericService } from 'src/generic/generic.service';
+import { ContactService } from 'src/contact/contact.service';
 
 @Injectable()
 export class CarService extends GenericService<Car> {
     constructor(
         @InjectRepository(Car) private readonly carRepository: Repository<Car>,
         private readonly modelSevice: ModelService,
-        private readonly damageService: DamageService
+        private readonly damageService: DamageService,
+        private readonly contactService: ContactService
     ) {
         super(carRepository);
     }
 
     async create(createCarDto: CreateCarDto): Promise<Car> {
         const car = new Car();
-        Object.assign(car, createCarDto);
+        car.color = createCarDto.color;
+        car.year = createCarDto.year;
+        car.vin = createCarDto.vin;
         car.model = await this.modelSevice.findOrCreate(createCarDto.brandName, createCarDto.modelName);
+        car.contacts = await Promise.all(createCarDto.contactIds.map(async id => await this.contactService.findOne(id)));
         return this.carRepository.save(car);
     }
 

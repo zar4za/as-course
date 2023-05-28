@@ -11,4 +11,6 @@ export class CreateCarDto {
     brandName: string;
     @ApiProperty()
     modelName: string;
+    @ApiProperty()
+    contactIds: number[];
 }
