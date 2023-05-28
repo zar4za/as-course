@@ -1,4 +1,4 @@
-import { FindManyOptions, Repository } from "typeorm";
+import { FindManyOptions, FindOptionsRelationByString, FindOptionsRelations, Repository } from "typeorm";
 import { GenericEntity } from "./generic.entity";
 
 export class GenericService<T extends GenericEntity> {
@@ -17,18 +17,16 @@ export class GenericService<T extends GenericEntity> {
 
     async update(entity: T): Promise<T> {
         const stored = await this.findOne(entity.id);
-
-        Object.keys(entity).forEach(key => {
-            stored[key] = entity[key];
-        });
-
-        this.repository.save(stored);
-        return stored;
+        Object.assign(stored, entity);
+        return await this.repository.save(stored);
     }
 
-    async findOne(id: any): Promise<T> { 
-        return await this.repository.findOneBy({
-            id
+    async findOne(id: any, relations?: FindOptionsRelationByString | FindOptionsRelations<T>): Promise<T> { 
+        return await this.repository.findOne({
+            where: {
+                id
+            },
+            relations
         })
     }
 

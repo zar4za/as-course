@@ -2,32 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Model } from './model.entity';
+import { GenericService } from 'src/generic/generic.service';
 
 @Injectable()
-export class ModelService {
+export class ModelService extends GenericService<Model> {
     constructor(
         @InjectRepository(Model)
         private readonly carModelRepository: Repository<Model>,
-    ) {}
-
-    async getAllCarModels(): Promise<Model[]> {
-        return await this.carModelRepository.find();
+    ) {
+        super(carModelRepository);
     }
 
-    async findOneByName(brand: string, model: string): Promise<Model> {
-        return await this.carModelRepository.findOne({
+    async findOrCreate(brand: string, model: string): Promise<Model> {
+        const stored = await this.carModelRepository.findOne({ 
             where: {
                 brand,
-                model,
-            },
+                model
+            }
         });
-    }
 
-    async createCarModel(carModel: Model): Promise<Model> {
-        return await this.carModelRepository.save(carModel);
-    }
+        if (stored == null) {
+            return await this.carModelRepository.save({
+                brand,
+                model
+            });
+        }
 
-    async deleteCarModel(carModel: Model): Promise<Model> {
-        return await this.carModelRepository.remove(carModel);
+        return stored;
     }
 }

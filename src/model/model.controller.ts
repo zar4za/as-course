@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
 import { Model } from './model.entity';
 import { ModelService } from './model.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -12,20 +12,20 @@ export class CarModelController {
   @ApiOperation({ summary: 'Получение списка моделей автомобилей.' })
   @ApiResponse({ status: 200, description: 'Список моделей автомобилей.', type: Model, isArray: true })
   async getAllCarModels(): Promise<Model[]> {
-    return await this.carModelService.getAllCarModels();
+    return await this.carModelService.findAll();
   }
 
   @Post()
   @ApiOperation({ summary: 'Создание модели автомобиля.' })
   @ApiResponse({ status: 201, description: 'Модель автомобиля успешно создана.', type: Model })
   async createCarModel(@Body() carModel: Model): Promise<Model> {
-    return await this.carModelService.createCarModel(carModel);
+    return await this.carModelService.add(carModel);
   }
 
-  @Delete()
+  @Delete(":id")
   @ApiOperation({ summary: 'Удаление модели автомобиля.' })
   @ApiResponse({ status: 200, description: 'Модель автомобиля успешно удалена.', type: Model })
-  async deleteCarModel(@Body() carModel: Model): Promise<Model> {
-    return await this.carModelService.deleteCarModel(carModel);
+  async deleteCarModel(@Param("id") id: number): Promise<Model> {
+    return await this.carModelService.remove(id);
   }
 }
